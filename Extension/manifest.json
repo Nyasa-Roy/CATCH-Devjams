@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "My Extension",
+    "name": "CATCH",
     "version": "1.0",
     "description": "Categorize Instagram saved posts and Google bookmarks.",
     "permissions": ["storage", "activeTab", "scripting"],
