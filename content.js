@@ -4,13 +4,15 @@ const savedPosts = [];
 
 // Function to extract saved posts from Instagram
 function getSavedPosts() {
-    const posts = document.querySelectorAll('article a'); // Adjust this selector based on Instagram's structure
+    console.log('Content script running'); // Debugging line
+    const posts = document.querySelectorAll('article a'); // Adjust this selector if needed
     posts.forEach(post => {
         const title = post.getAttribute('aria-label'); // Get the post title or description
         const url = post.href; // Get the post URL
         savedPosts.push({ title, url });
     });
-    // Send data to popup or background script
+
+    console.log(savedPosts); // Debugging line
     chrome.runtime.sendMessage({ posts: savedPosts });
 }
 
