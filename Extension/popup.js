@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('data').textContent = 'Error fetching data.';
                     });
                 } else {
-                    document.getElementById('data').textContent = 'No saved posts found.';
+                    document.getElementById('data').textContent = 'No saved posts found.Have a good day!';
                 }
             });
         });
