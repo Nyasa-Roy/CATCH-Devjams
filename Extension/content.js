@@ -1,3 +1,11 @@
+// Listen for messages from the popup
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "getSavedPosts") {
+        getSavedPosts(); // Call the function to retrieve saved posts
+        sendResponse({ posts: savedPosts });
+    }
+});
+
 // Function to extract saved posts from Instagram
 function getSavedPosts() {
     console.log('Content script running'); // Debugging line
@@ -7,7 +15,7 @@ function getSavedPosts() {
     
     // Array to store saved posts
     const savedPosts = [];
-    
+
     posts.forEach(post => {
         const title = post.getAttribute('aria-label'); // Check if aria-label exists and contains the post description
         const url = post.href; // Get the post URL
@@ -18,5 +26,7 @@ function getSavedPosts() {
     chrome.runtime.sendMessage({ posts: savedPosts }); // Send saved posts to background script
 }
 
-// Call the function on page load
-window.addEventListener('load', getSavedPosts);
+// Call the function when the DOM is fully loaded
+window.addEventListener('load', () => {
+    setTimeout(getSavedPosts, 3000); // Optional: Add a delay to ensure posts have loaded
+});
