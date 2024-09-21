@@ -8,35 +8,48 @@ HEADER = {
     # 'Authorization': 'token YOUR_PERSONAL_ACCESS_TOKEN'  # Uncomment this line if using authentication
 }
 
-for i in range(1, 19):
-    url = f"https://api.github.com/users/{USERNAME}/starred?per_page=100&page={i}"
-    fname = f"GithubStarredpost-{USERNAME}-{i}.json"
-    
-    response = requests.get(url, headers=HEADER)
-    
-    # Handle rate limiting
-    if response.status_code == 403:
-        print("Rate limit exceeded. Sleeping for 60 seconds...")
-        time.sleep(60)
-        continue
-    
-    if response.status_code == 200:
-        starred_content = response.json()
+def linkbhej(username):
+    all_repos = []
+    for i in range(1, 19):
+        url = f"https://api.github.com/users/{username}/starred?per_page=100&page={i}"
         
-        # Stop if no more content
-        if not starred_content:
-            break
+        response = requests.get(url, headers=HEADER)
         
-        # Save to JSON
-        with open(fname, 'w') as file: 
-            json.dump(starred_content, file, indent=4)
-        print(f"Saved {fname}")
-        with open(fname, 'r') as json_file:
-            system= json.load(json_file)   
-            for item in system:
-                repo_url = item["repo"]["html_url"]
-                print(f"Repo URL: {repo_url}")
+        # Handle rate limiting
+        if response.status_code == 403:
+            reset_time = int(response.headers.get("X-RateLimit-Reset", time.time() + 60))  # Get reset time from headers
+            sleep_time = max(reset_time - time.time(), 0)
+            print(f"Rate limit exceeded. Sleeping for {int(sleep_time)} seconds...")
+            time.sleep(sleep_time)
+            continue
+        
+        if response.status_code == 200:
+            starred_content = response.json()
+            
+            # Stop if no more content
+            if not starred_content:
+                break
+            
+            # Append the current batch of repositories
+            all_repos.extend(starred_content)
+            
+            # Save the current page's content to a file
+            fname = f"GithubStarredpost-{username}-{i}.json"
+            with open(fname, 'w') as file:
+                json.dump(starred_content, file, indent=4)
+            
+        else:
+            return f"Failed to fetch {url}: {response.status_code}"
+    
+    # Extract and return the repository URLs
+    repo_urls = [item["repo"]["html_url"] for item in all_repos]
+    
+    if repo_urls:
+        return repo_urls
     else:
-        print(f"Failed to fetch {url}: {response.status_code}")
+        return "No repositories found"
 
-
+# Call the function
+repos = linkbhej(USERNAME)
+for repo in repos:
+    print(repo)
