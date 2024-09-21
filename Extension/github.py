@@ -28,13 +28,15 @@ for i in range(1, 19):
             break
         
         # Save to JSON
-        with open(fname, 'w') as file:
+        with open(fname, 'w') as file: 
             json.dump(starred_content, file, indent=4)
         print(f"Saved {fname}")
+        with open(fname, 'r') as json_file:
+            system= json.load(json_file)   
+            for item in system:
+                repo_url = item["repo"]["html_url"]
+                print(f"Repo URL: {repo_url}")
     else:
         print(f"Failed to fetch {url}: {response.status_code}")
 
-with open('GithubStarredpost-Nyasa-Roy-1.json', 'r') as json_file:
-    data = json.load(json_file)
-for i in data:
-    print(i["url"])
+
