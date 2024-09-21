@@ -1,11 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 import requests
 import time
-import json
 
 app = Flask(__name__)
 
-USERNAME = 'Nyasa-Roy'
 HEADER = {
     'Accept': 'application/vnd.github.v3.star+json',
 }
@@ -32,10 +30,18 @@ def get_starred_repos(username):
     
     return [item["repo"]["html_url"] for item in all_repos]
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    repos = get_starred_repos(USERNAME)
-    return render_template('index.html', repos=repos)
+    if request.method == 'POST':
+        username = request.form['username']
+        if username:
+            return redirect(url_for('repos', username=username))
+    return render_template('index.html')
+
+@app.route('/repos/<username>')
+def repos(username):
+    repos = get_starred_repos(username)
+    return render_template('repos.html', repos=repos, username=username)
 
 if __name__ == '__main__':
     app.run(debug=True)
