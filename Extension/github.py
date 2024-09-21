@@ -33,3 +33,8 @@ for i in range(1, 19):
         print(f"Saved {fname}")
     else:
         print(f"Failed to fetch {url}: {response.status_code}")
+
+with open('GithubStarredpost-Nyasa-Roy-1.json', 'r') as json_file:
+    data = json.load(json_file)
+for i in data:
+    print(i["url"])
